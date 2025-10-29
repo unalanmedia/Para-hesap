@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Toplama Hesap</title>
+<style>
+  :root {
+    --bg-grad-top: #0f172a;
+    --bg-grad-bottom: #1e293b;
+    --card-bg: rgba(30,41,59,0.6);
+    --card-border: rgba(148,163,184,0.2);
+    --row-bg: rgba(15,23,42,0.4);
+    --row-alt-bg: rgba(30,41,59,0.4);
+    --accent: #38bdf8;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --radius-xl: 1.25rem;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0f172a 60%);
+    background-color: #0f172a;
+    color: var(--text-main);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    flex-shrink: 0;
+    text-align: center;
+    padding-bottom: 8px;
+  }
+
+  header .title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+  }
+
+  header .sub {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  .table-card {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 30px 120px rgba(0,0,0,0.8),
+                0 4px 20px rgba(0,0,0,0.6),
+                0 0 120px rgba(56,189,248,0.15) inset;
+    border-radius: var(--radius-xl);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .table-head {
+    display: grid;
+    grid-template-columns: 0.6fr 1fr 1fr 1fr;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    padding: 6px 10px 6px 10px;
+    border-radius: calc(var(--radius-xl) - 8px);
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(148,163,184,0.15);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .rows-wrapper {
+    flex: 1;
+    display: grid;
+    grid-auto-rows: 1fr;
+    margin-top: 8px;
+    min-height: 0;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 0.6fr 1fr 1fr 1fr;
+    align-items: center;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 12px;
+  }
+
+  .row:nth-child(odd){
+    background: var(--row-bg);
+  }
+  .row:nth-child(even){
+    background: var(--row-alt-bg);
+  }
+
+  .cell-label {
+    font-weight: 500;
+    text-align: center;
+    color: var(--text-main);
+  }
+
+  .cell-input {
+    display: flex;
+    justify-content: center;
+  }
+
+  input.money {
+    width: 90%;
+    max-width: 110px;
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(148,163,184,0.4);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--text-main);
+    font-family: inherit;
+    outline: none;
+  }
+
+  input.money:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(56,189,248,0.6);
+  }
+
+  .cell-out {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    min-width: 3ch;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  footer {
+    flex-shrink: 0;
+    margin-top: 10px;
+    background: rgba(15,23,42,0.7);
+    border: 1px solid rgba(56,189,248,0.3);
+    box-shadow: 0 0 30px rgba(56,189,248,0.4);
+    border-radius: var(--radius-xl);
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 6px;
+    column-gap: 8px;
+    text-align: center;
+  }
+
+  .total-label {
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 0.7rem;
+  }
+  .total-value {
+    font-weight: 600;
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+  }
+
+  html, body {
+    overflow: hidden;
+  }
+
+  @media (max-height: 640px) {
+    header .title { font-size: .95rem; }
+    header .sub { font-size: .7rem; }
+    .row { padding:4px 8px; font-size:.75rem; }
+    input.money { font-size:.75rem; padding:5px 6px; }
+    .table-head { padding:4px 8px; font-size:.65rem; }
+    footer { font-size:.7rem; }
+    .total-label { font-size:.65rem; }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header>
+    <div class="title">Toplu Para Takip</div>
+    <div class="sub">Canlı hesaplama • Kaydetmeye gerek yok • Anlık toplam</div>
+  </header>
+
+  <main class="table-card">
+    <div class="table-head">
+      <div>Kişi</div>
+      <div>Verilen<br>Para</div>
+      <div>İşlem<br>Ücreti</div>
+      <div>Elde<br>Kalan</div>
+    </div>
+
+    <div class="rows-wrapper" id="rowsWrapper">
+    </div>
+  </main>
+
+  <footer>
+    <div>
+      <div class="total-label">Toplam Verilen</div>
+      <div class="total-value" id="sumVerilen">0.00</div>
+    </div>
+    <div>
+      <div class="total-label">Toplam Ücret</div>
+      <div class="total-value" id="sumUcret">0.00</div>
+    </div>
+    <div>
+      <div class="total-label">Toplam Elde Kalan</div>
+      <div class="total-value" id="sumKalan">0.00</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const ROW_COUNT = 10;
+
+  const rowsWrapper = document.getElementById('rowsWrapper');
+  const sumVerilenEl = document.getElementById('sumVerilen');
+  const sumUcretEl   = document.getElementById('sumUcret');
+  const sumKalanEl   = document.getElementById('sumKalan');
+
+  function toNum(v){
+    const n = parseFloat( (v||'').toString().replace(',','.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function createRow(i){
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const cLabel = document.createElement('div');
+    cLabel.className = 'cell-label';
+    cLabel.textContent = (i+1) + ". kişi";
+
+    const cVerilen = document.createElement('div');
+    cVerilen.className = 'cell-input';
+    const inpVerilen = document.createElement('input');
+    inpVerilen.type = 'number';
+    inpVerilen.step = '0.01';
+    inpVerilen.inputMode = 'decimal';
+    inpVerilen.className = 'money verilen';
+    inpVerilen.placeholder = "0.00";
+
+    const cUcret = document.createElement('div');
+    cUcret.className = 'cell-input';
+    const inpUcret = document.createElement('input');
+    inpUcret.type = 'number';
+    inpUcret.step = '0.01';
+    inpUcret.inputMode = 'decimal';
+    inpUcret.className = 'money ucret';
+    inpUcret.placeholder = "0.00";
+
+    const cKalan = document.createElement('div');
+    cKalan.className = 'cell-out kalan';
+    cKalan.textContent = "0.00";
+
+    cVerilen.appendChild(inpVerilen);
+    cUcret.appendChild(inpUcret);
+
+    row.appendChild(cLabel);
+    row.appendChild(cVerilen);
+    row.appendChild(cUcret);
+    row.appendChild(cKalan);
+
+    function recalcRowAndTotals(){
+      const verilen = toNum(inpVerilen.value);
+      const ucret = toNum(inpUcret.value);
+      const kalan = verilen - ucret;
+      cKalan.textContent = kalan.toFixed(2);
+      recalcTotals();
+    }
+
+    inpVerilen.addEventListener('input', recalcRowAndTotals);
+    inpUcret.addEventListener('input', recalcRowAndTotals);
+
+    return row;
+  }
+
+  function recalcTotals(){
+    let totalVerilen = 0;
+    let totalUcret = 0;
+    let totalKalan = 0;
+
+    const allRows = rowsWrapper.querySelectorAll('.row');
+    allRows.forEach(r=>{
+      const v = toNum(r.querySelector('input.verilen').value);
+      const u = toNum(r.querySelector('input.ucret').value);
+      const k = v - u;
+      totalVerilen += v;
+      totalUcret += u;
+      totalKalan += k;
+    });
+
+    sumVerilenEl.textContent = totalVerilen.toFixed(2);
+    sumUcretEl.textContent   = totalUcret.toFixed(2);
+    sumKalanEl.textContent   = totalKalan.toFixed(2);
+  }
+
+  for(let i=0;i<ROW_COUNT;i++){
+    rowsWrapper.appendChild(createRow(i));
+  }
+
+})();
+</script>
+</body>
+</html>
